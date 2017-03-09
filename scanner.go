@@ -66,6 +66,8 @@ func (s *scanner) scan() (tok token, lit string) {
 		return tEOF, ""
 	case ';':
 		return tSEMICOLON, string(ch)
+	case ':':
+		return tCOLON, string(ch)
 	case '=':
 		return tEQUALS, string(ch)
 	case '"':
