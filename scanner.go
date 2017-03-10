@@ -100,6 +100,18 @@ func (s *scanner) scan() (tok token, lit string) {
 	return tILLEGAL, string(ch)
 }
 
+// skipWhitespace consumes all whitespace until eof or a non-whitespace rune.
+func (s *scanner) skipWhitespace() {
+	for {
+		if ch := s.read(); ch == eof {
+			break
+		} else if !isWhitespace(ch) {
+			s.unread(ch)
+			break
+		}
+	}
+}
+
 // scanWhitespace consumes the current rune and all contiguous whitespace.
 func (s *scanner) scanWhitespace() (tok token, lit string) {
 	// Create a buffer and read the current character into it.

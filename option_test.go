@@ -48,7 +48,7 @@ func TestOptionCases(t *testing.T) {
 		"-3.14E1",
 	}, {
 		`option (foo_options) = { opt1: 123 opt2: "baz" };`,
-		"foo_options",
+		"(foo_options)",
 		"",
 		"",
 	}} {

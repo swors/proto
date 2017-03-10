@@ -112,11 +112,11 @@ func (o *Option) parse(p *Parser) error {
 	if tEQUALS != tok {
 		return p.unexpected(lit, "option constant =", o)
 	}
-	tok, lit = p.scanIgnoreWhitespace()
-	if tLEFTCURLY == tok {
+	p.s.skipWhitespace()
+	if p.s.peek('{') {
+		p.s.read()
 		return o.parseAggregate(p)
 	}
-	p.s.unread(rune(lit[0])) // danger robinson
 	// non aggregate
 	l := new(Literal)
 	if err := l.parse(p); err != nil {
@@ -157,17 +157,20 @@ func (o *Option) parseAggregate(p *Parser) error {
 		if tIDENT != tok {
 			return p.unexpected(lit, "option aggregate key", o)
 		}
+		key := lit
 		tok, lit = p.scanIgnoreWhitespace()
 		if tCOLON != tok {
 			return p.unexpected(lit, "option aggregate key colon :", o)
 		}
-		key := lit
-		tok, lit = p.scanIgnoreWhitespace()
 		l := new(Literal)
 		if err := l.parse(p); err != nil {
 			return err
 		}
 		o.AggregatedConstants[key] = l
+	}
+	tok, lit := p.scanIgnoreWhitespace()
+	if tSEMICOLON != tok {
+		return p.unexpected(lit, "option aggregate end ;", o)
 	}
 	return nil
 }

@@ -63,11 +63,24 @@ func TestRPCWithOptionAggregateSyntax(t *testing.T) {
 		t.Fatal(err)
 	}
 	srv := collect(pr).Services()[0]
-	if got, want := len(srv.Elements), 3; got != want {
+	if got, want := len(srv.Elements), 1; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	rpc1 := srv.Elements[1].(*RPC)
+	rpc1 := srv.Elements[0].(*RPC)
 	if got, want := len(rpc1.Options), 1; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	opt := rpc1.Options[0]
+	if got, want := opt.Name, "(test_ident)"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := len(opt.AggregatedConstants), 2; got != want {
+		t.Fatalf("got [%v] want [%v]", got, want)
+	}
+	if got, want := opt.AggregatedConstants["test"].Source, "test"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := opt.AggregatedConstants["test2"].Source, "test2"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 }
