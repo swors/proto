@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/xml"
-	"log"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -58,9 +58,9 @@ func buildXSDTypes(def *proto.Proto) (list []XSDComplexType, err error) {
 		if msg, ok := each.(*proto.Message); ok {
 			list = append(list, buildComplexType(msg))
 		} else {
-			if *oDebug {
-				log.Printf("skipped a %T\n", each)
-			}
+			// if *oDebug {
+			// 	log.Printf("skipped a %T\n", each)
+			// }
 		}
 	}
 	return list, nil
@@ -77,9 +77,9 @@ func buildComplexType(msg *proto.Message) XSDComplexType {
 		if field, ok := other.(*proto.NormalField); ok {
 			sq = withNormalFieldToSequence(field, sq)
 		} else {
-			if *oDebug {
-				log.Printf("skipped a %T\n", other)
-			}
+			// if *oDebug {
+			// 	log.Printf("skipped a %T\n", other)
+			// }
 		}
 	}
 	ct.Sequence = sq
@@ -90,7 +90,7 @@ func withNormalFieldToSequence(f *proto.NormalField, s XSDSequence) XSDSequence 
 	el := XSDElement{}
 	el.Name = f.Name
 	if f.Comment != nil {
-		el.Comment = f.Comment.Message()
+		el.Comment = strings.Join(f.Comment.Lines, "\n")
 	}
 	el.Type = mapProtoSimpleTypeToXSDSimpleType(f.Type)
 	// proto 3 fields are always optional. TODO check proto version
